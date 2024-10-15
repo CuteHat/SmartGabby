@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package centralGabby;
+option go_package = "github.com/CuteHat/SmartGabby/generated/discovery-service";
+
+service DiscoveryService {
+  rpc register(RegisterRequest) returns (RegisterResponse) {}
+}
+
+message RegisterRequest {
+  string preferredName = 1;
+}
+
+message RegisterResponse {
+  string message = 1;
+}
