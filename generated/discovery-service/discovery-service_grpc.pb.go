@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,7 +20,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DiscoveryService_Register_FullMethodName = "/centralGabby.DiscoveryService/register"
+	DiscoveryService_Register_FullMethodName   = "/centralGabby.DiscoveryService/register"
+	DiscoveryService_FetchPeers_FullMethodName = "/centralGabby.DiscoveryService/fetchPeers"
 )
 
 // DiscoveryServiceClient is the client API for DiscoveryService service.
@@ -27,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DiscoveryServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
+	FetchPeers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FetchPeersResponse, error)
 }
 
 type discoveryServiceClient struct {
@@ -47,11 +50,22 @@ func (c *discoveryServiceClient) Register(ctx context.Context, in *RegisterReque
 	return out, nil
 }
 
+func (c *discoveryServiceClient) FetchPeers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FetchPeersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FetchPeersResponse)
+	err := c.cc.Invoke(ctx, DiscoveryService_FetchPeers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DiscoveryServiceServer is the server API for DiscoveryService service.
 // All implementations must embed UnimplementedDiscoveryServiceServer
 // for forward compatibility.
 type DiscoveryServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
+	FetchPeers(context.Context, *emptypb.Empty) (*FetchPeersResponse, error)
 	mustEmbedUnimplementedDiscoveryServiceServer()
 }
 
@@ -64,6 +78,9 @@ type UnimplementedDiscoveryServiceServer struct{}
 
 func (UnimplementedDiscoveryServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedDiscoveryServiceServer) FetchPeers(context.Context, *emptypb.Empty) (*FetchPeersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FetchPeers not implemented")
 }
 func (UnimplementedDiscoveryServiceServer) mustEmbedUnimplementedDiscoveryServiceServer() {}
 func (UnimplementedDiscoveryServiceServer) testEmbeddedByValue()                          {}
@@ -104,6 +121,24 @@ func _DiscoveryService_Register_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DiscoveryService_FetchPeers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DiscoveryServiceServer).FetchPeers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DiscoveryService_FetchPeers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DiscoveryServiceServer).FetchPeers(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DiscoveryService_ServiceDesc is the grpc.ServiceDesc for DiscoveryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +149,10 @@ var DiscoveryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "register",
 			Handler:    _DiscoveryService_Register_Handler,
+		},
+		{
+			MethodName: "fetchPeers",
+			Handler:    _DiscoveryService_FetchPeers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

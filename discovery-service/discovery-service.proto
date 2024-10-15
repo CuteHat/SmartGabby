@@ -1,10 +1,13 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 package centralGabby;
 option go_package = "github.com/CuteHat/SmartGabby/generated/discovery-service";
 
 service DiscoveryService {
   rpc register(RegisterRequest) returns (RegisterResponse) {}
+  rpc fetchPeers(google.protobuf.Empty) returns (FetchPeersResponse) {}
 }
 
 message RegisterRequest {
@@ -13,4 +16,13 @@ message RegisterRequest {
 
 message RegisterResponse {
   string message = 1;
+}
+
+message FetchPeersResponse {
+  repeated PeerInfo peers = 1;
+}
+
+message PeerInfo {
+  string peerPreferredName = 1;
+  string peerIp = 2;
 }

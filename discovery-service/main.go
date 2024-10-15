@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"net"
 )
@@ -36,6 +37,16 @@ func (server *DiscoveryServiceServerImpl) Register(ctx context.Context, request 
 	}
 	peers[request.PreferredName] = tcpAddr
 	return &pb.RegisterResponse{Message: "You have been successfully registered"}, nil
+}
+
+func (server *DiscoveryServiceServerImpl) FetchPeers(ctx context.Context, req *emptypb.Empty) (*pb.FetchPeersResponse, error) {
+	peerInfos := make([]*pb.PeerInfo, len(peers))
+
+	for preferredName, peer := range peers {
+		peerInfos = append(peerInfos, &pb.PeerInfo{PeerPreferredName: preferredName, PeerIp: peer.IP.String()})
+	}
+
+	return &pb.FetchPeersResponse{Peers: peerInfos}, nil
 }
 
 func main() {
